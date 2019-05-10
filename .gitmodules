@@ -1,0 +1,3 @@
+[submodule "tarim"]
+	path = tarim
+	url = https://github.com/KenanBolat/tarim

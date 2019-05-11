@@ -8,6 +8,7 @@ import xlrd
 import gc
 import sys
 import time
+
 gc.enable()
 
 
@@ -20,13 +21,15 @@ def date_line_decorator(func):
         ret = func(*args, **kwargs)
         print(datetime.datetime.now() - st)
         print("^" * 40)
+        return ret
     return wrapper
 
 @date_line_decorator
 def aaa(a=1):
-    print(a)
     time.sleep(3)
     return 1
+
+
 
 
 def layer_visibility(map_document, layer_name, visible=True):
@@ -378,13 +381,13 @@ def process_it(x_, dirpath_):
                                                                 x_.split(".")[
                                                                     0] + "_" + tag + "_" + subtype + ".pdf"))
                     # print "Exporting ... \t\t", flag, ":\t\t\t", subtype, "Exported Successfully"
-                    print ('%12s %12s %12s %12s' % ('Exporting', flag, subtype, "Successful"))
+                    print('%12s %12s %12s %12s' % ('Exporting', flag, subtype, "Successful"))
 
                 except:
                     exc_type, exc_obj, exc_tb = sys.exc_info()
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(exc_type, fname, exc_tb.tb_lineno)
-                    print ("!!HATA ... \t\t", flag, ":\t\t\t", subtype, "Exporting Unsuccsesful")
+                    print("!!HATA ... \t\t", flag, ":\t\t\t", subtype, "Exporting Unsuccsesful")
     del mxd
 
 # endregion

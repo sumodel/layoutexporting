@@ -1,16 +1,33 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import print_function
+import datetime
 import arcpy
 import re
 import os
 import xlrd
 import gc
 import sys
-
+import time
 gc.enable()
 
 
 # region Methods
+
+def date_line_decorator(func):
+    def wrapper(*args, **kwargs):
+        st = datetime.datetime.now()
+        print("-" * 40)
+        ret = func(*args, **kwargs)
+        print(datetime.datetime.now() - st)
+        print("^" * 40)
+    return wrapper
+
+@date_line_decorator
+def aaa(a=1):
+    print(a)
+    time.sleep(3)
+    return 1
+
 
 def layer_visibility(map_document, layer_name, visible=True):
     """
@@ -313,7 +330,7 @@ def process_it(x_, dirpath_):
     frame_no_list = [row[0] for row in arcpy.da.SearchCursor(lyr_data, "Frame_No")]
 
     for frame in frame_no_list:
-        print frame
+        print(frame)
         excel_file_name = os.path.join(excel_folder_name, "FR" + str(int(frame)) + ".xlsx")
         excel_file = os.path.join(excel_folder_name, excel_file_name)
         workbook = xlrd.open_workbook(excel_file)
@@ -361,13 +378,13 @@ def process_it(x_, dirpath_):
                                                                 x_.split(".")[
                                                                     0] + "_" + tag + "_" + subtype + ".pdf"))
                     # print "Exporting ... \t\t", flag, ":\t\t\t", subtype, "Exported Successfully"
-                    print '%12s %12s %12s %12s' % ('Exporting', flag, subtype, "Successful")
+                    print ('%12s %12s %12s %12s' % ('Exporting', flag, subtype, "Successful"))
 
                 except:
                     exc_type, exc_obj, exc_tb = sys.exc_info()
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(exc_type, fname, exc_tb.tb_lineno)
-                    print "!!HATA ... \t\t", flag, ":\t\t\t", subtype, "Exporting Unsuccsesful"
+                    print ("!!HATA ... \t\t", flag, ":\t\t\t", subtype, "Exporting Unsuccsesful")
     del mxd
 
 # endregion

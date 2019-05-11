@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-Danger and Depth Exporting
-CreateDate = 10.11.2018
-Author : Kenan Bolat
-Version : 0.0.4
-ModifyDate = 18.11.2018
-
-"""
-
 import arcpy
 import re
 import os
@@ -19,6 +8,7 @@ import glob
 import gc
 import sys
 import math
+
 gc.enable()
 
 
@@ -28,7 +18,6 @@ def layer_visibility(map_document, layer_name, visible=True):
         layer.visible = visible
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
-
 
 
 def change_all_layers(map_document, enabled=False):
@@ -137,7 +126,7 @@ def update_text(map_document, subtype_):
 
 
 def update_pafta_value(map_document, flag, subtype_, wsheet):
-    legend_elemen_list = [u"Pafta_Name", u"Q_VAL_1", u"Q_VAL_2", u"Q_VAL_3", u"Q_VAL_4", u"Q_VAL_5"]
+    legend_element_list = [u"Pafta_Name", u"Q_VAL_1", u"Q_VAL_2", u"Q_VAL_3", u"Q_VAL_4", u"Q_VAL_5"]
     input__sup = get_input_values(wsheet, 1)
     for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Antet_Subtype_sup"):
         el.text = input__sup[2]
@@ -148,7 +137,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 5)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -160,7 +149,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 6)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -171,7 +160,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 6)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -182,7 +171,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 4)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -196,7 +185,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 2)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -207,7 +196,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 3)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -218,7 +207,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 1)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -229,7 +218,7 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
             input_ = get_input_values(wsheet, 1)
             for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
                 el.text = input_[1]
-            for en, agi in enumerate(legend_elemen_list[1:]):
+            for en, agi in enumerate(legend_element_list[1:]):
                 # print en + 1, agi
                 for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
                     try:
@@ -284,10 +273,10 @@ def change_upper_antet(map_document, peak_count, show=True):
 
 def update_peak_values_text(map_document, peak_values, peak_texts):
     for en_val, val_ in enumerate(peak_values):
-        for el_val in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Q_VAL_" + str(en_val+1)):
+        for el_val in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Q_VAL_" + str(en_val + 1)):
             el_val.text = val_
     for en, txt in enumerate(peak_texts):
-        for el_text in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Q_VAL_TEXT_" + str(en+1)):
+        for el_text in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Q_VAL_TEXT_" + str(en + 1)):
             el_text.text = txt
     arcpy.RefreshActiveView()
 
@@ -300,7 +289,8 @@ def update_text(map_document, subtype_):
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
 
-def process_it(x_,  dirpath_):
+
+def process_it(x_, dirpath_):
     location_of_mxd = os.path.join(dirpath_, x_)
     path_of_process = os.path.dirname(location_of_mxd)
     excel_folder_name = os.path.abspath(os.path.join(path_of_process, "..", "EXCEL"))
@@ -318,7 +308,7 @@ def process_it(x_,  dirpath_):
 
     for frame in frame_no_list:
         print frame
-        excel_file_name = os.path.join(excel_folder_name, "FR"+str(int(frame))+".xlsx")
+        excel_file_name = os.path.join(excel_folder_name, "FR" + str(int(frame)) + ".xlsx")
         excel_file = os.path.join(excel_folder_name, excel_file_name)
         workbook = xlrd.open_workbook(excel_file)
         worksheet = workbook.sheet_by_index(0)
@@ -374,35 +364,34 @@ def process_it(x_,  dirpath_):
                     print "!!HATA ... \t\t", flag, ":\t\t\t", subtype, "Exporting Unsuccsesful"
     del mxd
 
+
 # endregion
 
 
 # process_folder = r"C:\Users\knn\Desktop\TARIM_PAFTA_SET\TARIM_PAFTA_SET"
 process_folder = r"C:\Users\knn\Desktop\_ARAS_FOR_TARIM_PAFTA_RISK"
-# process_folder = r"I:\temp\sumodel\BM_AC_BA_BU\AC\A   C"
-#
+
 
 exemption = [
 
-# "AFYON_Derinlik_Tehlike.mxd",               ## 10 min
-# "AKSEHIR_Derinlik_Tehlike.mxd",             ## 10 min
-# "CAY_Derinlik_Tehlike.mxd",                 ## 10 min
-# "DERECINE_Derinlik_Tehlike.mxd",            ## 10 min
-# "GAZLIGOL_Derinlik_Tehlike.mxd",            ## 10 min
-# "ISCEHISAR_Derinlik_Tehlike.mxd",           ## 10 min
-# "SEYITLER3_Derinlik_Tehlike.mxd",           ## 10 min
-# "SINANPASA_Derinlik_Tehlike.mxd",           ## 10 min
-# "SUHUT_Derinlik_Tehlike.mxd",               ## 10 min
-# "SULTANDAGI_Derinlik_Tehlike.mxd"           ## 10 min
+    # "AFYON_Derinlik_Tehlike.mxd",               ## 10 min
+    # "AKSEHIR_Derinlik_Tehlike.mxd",             ## 10 min
+    # "CAY_Derinlik_Tehlike.mxd",                 ## 10 min
+    # "DERECINE_Derinlik_Tehlike.mxd",            ## 10 min
+    # "GAZLIGOL_Derinlik_Tehlike.mxd",            ## 10 min
+    # "ISCEHISAR_Derinlik_Tehlike.mxd",           ## 10 min
+    # "SEYITLER3_Derinlik_Tehlike.mxd",           ## 10 min
+    # "SINANPASA_Derinlik_Tehlike.mxd",           ## 10 min
+    # "SUHUT_Derinlik_Tehlike.mxd",               ## 10 min
+    # "SULTANDAGI_Derinlik_Tehlike.mxd"           ## 10 min
 
 ]
 
-
 import multiprocessing
+
 multiprocessing.freeze_support()
 if __name__ == '__main__':
     arcpy.env.overwriteOutput = True
-
     start = datetime.datetime.now()
     print start
     mxdfiles = list([])
@@ -410,18 +399,10 @@ if __name__ == '__main__':
     for dirpath, subdirs, files in os.walk(process_folder):
         for x in files:
             if x.endswith(".mxd") and x not in exemption:
-                # if x.endswith(".mxd"):
-
                 print x
                 p = multiprocessing.Process(target=process_it, args=(x, dirpath))
                 p.start()
                 p.join()
-                #
-                # del mxd
-                # del excel_file_name
-                # del excel_file
-                # del worksheet
-                # del workbook
                 print x, "Duration", datetime.datetime.now() - start
 
     print datetime.datetime.now() - start

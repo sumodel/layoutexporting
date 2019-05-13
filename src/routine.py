@@ -46,7 +46,6 @@ def layer_visibility(map_document, layer_name, visible=True):
     :return: None
     """
 
-
     for layer in arcpy.mapping.ListLayers(map_document, layer_name):
         layer.visible = visible
     arcpy.RefreshTOC()
@@ -66,6 +65,7 @@ def enable_all_layers(map_document, enabled=True):
         layer.visible = enabled
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
+
 
 def enable_dimension_layers(map_document, enabled=True):
     layer_list = [u"1D", u"2D"]
@@ -279,6 +279,54 @@ def update_pafta_value(map_document, flag, subtype_, wsheet):
                         el_agi.text = str(input_[4]).split(",")[en].replace(" ", "")
                     except:
                         el_agi.text = u" "
+
+    if flag == 'risk':
+        for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Antet_Subtype"):
+            el.text = re.sub("(?<=^)(.*?)(?=\()", u"TAŞKIN RİSK HARİTASI", el.text)
+        if subtype_ == "Q50":
+            input_ = get_input_values(wsheet, 2)
+            for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
+                el.text = input_[1]
+            for en, agi in enumerate(legend_element_list[1:]):
+                # print en + 1, agi
+                for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
+                    try:
+                        el_agi.text = str(input_[4]).split(",")[en].replace(" ", "")
+                    except:
+                        el_agi.text = u" "
+        if subtype_ == "Q100":
+            input_ = get_input_values(wsheet, 3)
+            for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
+                el.text = input_[1]
+            for en, agi in enumerate(legend_element_list[1:]):
+                # print en + 1, agi
+                for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
+                    try:
+                        el_agi.text = str(input_[4]).split(",")[en].replace(" ", "")
+                    except:
+                        el_agi.text = u" "
+        if subtype_ == "Q500":
+            input_ = get_input_values(wsheet, 4)
+            for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
+                el.text = input_[1]
+            for en, agi in enumerate(legend_element_list[1:]):
+                # print en + 1, agi
+                for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
+                    try:
+                        el_agi.text = str(input_[4]).split(",")[en].replace(" ", "")
+                    except:
+                        el_agi.text = u" "
+        if subtype_ == "Q10":
+            input_ = get_input_values(wsheet, 1)
+            for el in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", "Pafta_Name"):
+                el.text = input_[1]
+            for en, agi in enumerate(legend_element_list[1:]):
+                # print en + 1, agi
+                for el_agi in arcpy.mapping.ListLayoutElements(map_document, "TEXT_ELEMENT", agi):
+                    try:
+                        el_agi.text = str(input_[4]).split(",")[en].replace(" ", "")
+                    except:
+                        el_agi.text = u" "
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
 
@@ -345,6 +393,7 @@ def update_text(map_document, subtype_):
 
 
 def process_it(x_, dirpath_):
+    st = datetime.datetime.now()
     location_of_mxd = os.path.join(dirpath_, x_)
     path_of_process = os.path.dirname(location_of_mxd)
     excel_folder_name = os.path.abspath(os.path.join(path_of_process, "..", "EXCEL"))
@@ -406,11 +455,18 @@ def process_it(x_, dirpath_):
                     arcpy.RefreshTOC()
                     arcpy.RefreshActiveView()
                     # print "Exporting ... ", flag, ":", subtype
-                    arcpy.mapping.ExportToPDF(mxd, os.path.join(output_pdf_path, "FR" + str(int(frame)) + "_" +
-                                                                x_.split(".")[
-                                                                    0] + "_" + tag + "_" + subtype + ".pdf"))
-                    # print "Exporting ... \t\t", flag, ":\t\t\t", subtype, "Exported Successfully"
-                    print('%12s %12s %12s %12s %12s' % ('Exporting',frame, flag, subtype, "Successful"))
+                    print('%12s %12s %12s %12s' % ('Exporting', frame, flag, subtype), end="\t")
+                    arcpy.mapping.ExportToPDF(mxd, os.path.join(output_pdf_path,
+                                                                "FR"
+                                                                + str(int(frame))
+                                                                + "_"
+                                                                + x_.split(".")[0]
+                                                                + "_"
+                                                                + tag
+                                                                + "_"
+                                                                + subtype
+                                                                + ".pdf"))
+                    print('%12s %12s' % ("Successful in ", datetime.datetime.now() - st))
 
                 except:
                     exc_type, exc_obj, exc_tb = sys.exc_info()

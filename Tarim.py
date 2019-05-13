@@ -12,12 +12,12 @@ if __name__ == '__main__':
     process_folder = r"C:\Users\knn\Desktop\_ARAS_FOR_TARIM_PAFTA_RISK"
     exemption = [
 
-        # "SULTANDAGI_Derinlik_Tehlike.mxd"           ## 10 min
         "TARIM_TARIM_PAFTA_RISK.mxd",
         "TARIM_TARIM_PAFTA_RISK_V_0.1.mxd",
         "TARIM_TARIM_PAFTA_RISK_V_0.2.mxd",
         "TARIM_TARIM_PAFTA_RISK_V_0.3.mxd",
         "TARIM_TARIM_PAFTA_RISK_V_0.4.mxd",
+        "TARIM_TARIM_PAFTA_RISK_V_0.5.mxd",
     ]
     start = datetime.datetime.now()
     print(start)
@@ -31,3 +31,4 @@ if __name__ == '__main__':
                 p.join()
                 print(x, "Duration", datetime.datetime.now() - start)
     print(datetime.datetime.now() - start)
+    

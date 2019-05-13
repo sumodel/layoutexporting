@@ -413,7 +413,7 @@ def process_it(x_, dirpath_):
         workbook = xlrd.open_workbook(excel_file)
         worksheet = workbook.sheet_by_index(0)
         enable_all_layers(mxd)
-        layer_visibility(mxd, "Basemap", False)
+        # layer_visibility(mxd, "Basemap", False)
         # Enable all layers with sub layers
         df = arcpy.mapping.ListDataFrames(mxd, "LegendUR*")[0]
         for lyr in arcpy.mapping.ListLayers(mxd, "25000*", df):

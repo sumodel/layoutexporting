@@ -11,8 +11,13 @@ import time
 
 gc.enable()
 
-
 # region Methods
+
+_layer_dict = {'risk': u'Risk',
+               'danger': u'Danger',
+               'depth': u'Depth'
+               }
+
 
 def date_line_decorator(func):
     def wrapper(*args, **kwargs):
@@ -22,14 +27,14 @@ def date_line_decorator(func):
         print(datetime.datetime.now() - st)
         print("^" * 40)
         return ret
+
     return wrapper
+
 
 @date_line_decorator
 def aaa(a=1):
-    time.sleep(3)
+    pass
     return 1
-
-
 
 
 def layer_visibility(map_document, layer_name, visible=True):
@@ -40,6 +45,8 @@ def layer_visibility(map_document, layer_name, visible=True):
     :param visible: Default visibility is true, change false to disable
     :return: None
     """
+
+
     for layer in arcpy.mapping.ListLayers(map_document, layer_name):
         layer.visible = visible
     arcpy.RefreshTOC()
@@ -47,12 +54,18 @@ def layer_visibility(map_document, layer_name, visible=True):
 
 
 def change_all_layers(map_document, enabled=False):
-    layer_list = [u"Q100", u"Q10", u"Q50", u"Tehlike Haritaları", u"Derinlik Haritaları", u"Risk_Data"]
+    layer_list = [u"Q100", u"Q10", u"Q50", u"Q10", _layer_dict['danger'], _layer_dict['depth'], _layer_dict['risk']]
     for layer in layer_list:
         layer_visibility(map_document, layer, visible=enabled)
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
 
+
+def enable_all_layers(map_document, enabled=True):
+    for layer in arcpy.mapping.ListLayers(map_document):
+        layer.visible = enabled
+    arcpy.RefreshTOC()
+    arcpy.RefreshActiveView()
 
 def enable_dimension_layers(map_document, enabled=True):
     layer_list = [u"1D", u"2D"]
@@ -122,24 +135,39 @@ def change_frame(map_document, flag_="default"):
 def change_subtype(map_document, wsheet, subtype_=u'a', flag_="default"):
     if flag_ == "default":
         change_all_layers(map_document)
-    elif flag_ == 'depth':
+    elif flag_ == u'depth':
         change_all_layers(map_document)
         for layer in arcpy.mapping.ListLayers(map_document):
-            if layer.longName == subtype_ + "\\" + u"Derinlik Haritaları":
+            if layer.longName == subtype_ + "\\" + _layer_dict['depth']:
                 layer_visibility(map_document, layer, visible=True)
                 layer_visibility(map_document, subtype_, visible=True)
                 change_legend(map_document, flag_)
                 update_text(map_document, subtype_)
                 update_pafta_value(map_document, flag_, subtype_, wsheet)
-    elif flag_ == 'danger':
+    elif flag_ == u'danger':
         change_all_layers(map_document)
         for layer in arcpy.mapping.ListLayers(map_document):
-            if layer.longName == subtype_ + "\\" + u"Tehlike Haritaları":
+            if layer.longName == subtype_ + "\\" + _layer_dict['danger']:
                 layer_visibility(map_document, layer, visible=True)
                 layer_visibility(map_document, subtype_, visible=True)
                 change_legend(map_document, flag_)
                 update_text(map_document, subtype_)
                 update_pafta_value(map_document, flag_, subtype_, wsheet)
+
+    elif flag_ == u'risk':
+        change_all_layers(map_document)
+        for layer in arcpy.mapping.ListLayers(map_document):
+            # if layer.longName == subtype_ + "\\" + _layer_dict['risk']:
+            if layer.longName == _layer_dict['risk']:
+                layer_visibility(map_document, layer, visible=True)
+                layer_visibility(map_document, _layer_dict['depth'], visible=True)
+                layer_visibility(map_document, subtype_, visible=True)
+                change_legend(map_document, flag_)
+                update_text(map_document, subtype_)
+                update_pafta_value(map_document, flag_, subtype_, wsheet)
+            elif layer.longName == _layer_dict['depth']:
+                layer_visibility(map_document, layer, visible=True)
+                layer_visibility(map_document, subtype_, visible=True)
 
 
 def update_text(map_document, subtype_):
@@ -320,12 +348,10 @@ def process_it(x_, dirpath_):
     location_of_mxd = os.path.join(dirpath_, x_)
     path_of_process = os.path.dirname(location_of_mxd)
     excel_folder_name = os.path.abspath(os.path.join(path_of_process, "..", "EXCEL"))
-
     output_pdf_path = os.path.abspath(os.path.join(path_of_process, "..", "PDF"))
     mxd = arcpy.mapping.MapDocument(location_of_mxd)
     # mxd = arcpy.mapping.MapDocument("CURRENT")
     # temp_mxd = arcpy.mapping.MapDocument(location_of_mxd)
-
     df_data = arcpy.mapping.ListDataFrames(mxd, "Data")[0]
     for lyr_data in arcpy.mapping.ListLayers(mxd, "25000*", df_data):
         pass
@@ -333,12 +359,13 @@ def process_it(x_, dirpath_):
     frame_no_list = [row[0] for row in arcpy.da.SearchCursor(lyr_data, "Frame_No")]
 
     for frame in frame_no_list:
-        print(frame)
         excel_file_name = os.path.join(excel_folder_name, "FR" + str(int(frame)) + ".xlsx")
         excel_file = os.path.join(excel_folder_name, excel_file_name)
         workbook = xlrd.open_workbook(excel_file)
         worksheet = workbook.sheet_by_index(0)
+        enable_all_layers(mxd)
         layer_visibility(mxd, "Basemap", False)
+        # Enable all layers with sub layers
         df = arcpy.mapping.ListDataFrames(mxd, "LegendUR*")[0]
         for lyr in arcpy.mapping.ListLayers(mxd, "25000*", df):
             pass
@@ -348,7 +375,8 @@ def process_it(x_, dirpath_):
         df_data.scale = 25000
         change_subtype_layer_names(mxd)
         subtype_list = [u"Q50", u"Q100", u"Q10"]
-        flag_list = [u'danger', u'depth']
+        # flag_list = [u'danger', u'depth', u'risk']
+        flag_list = [u'risk']
         for flag in flag_list:
             for subtype in subtype_list:
                 change_subtype(mxd, worksheet, subtype, flag)
@@ -356,8 +384,9 @@ def process_it(x_, dirpath_):
                     tag = u'Derinlik'
                 elif flag == u'danger':
                     tag = u'Tehlike'
+                elif flag == u"risk":
+                    tag = u"Risk"
                 try:
-
                     if flag == u'depth':
                         arti = 0
                     else:
@@ -381,7 +410,7 @@ def process_it(x_, dirpath_):
                                                                 x_.split(".")[
                                                                     0] + "_" + tag + "_" + subtype + ".pdf"))
                     # print "Exporting ... \t\t", flag, ":\t\t\t", subtype, "Exported Successfully"
-                    print('%12s %12s %12s %12s' % ('Exporting', flag, subtype, "Successful"))
+                    print('%12s %12s %12s %12s %12s' % ('Exporting',frame, flag, subtype, "Successful"))
 
                 except:
                     exc_type, exc_obj, exc_tb = sys.exc_info()

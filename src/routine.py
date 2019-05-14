@@ -392,8 +392,7 @@ def update_text(map_document, subtype_):
     arcpy.RefreshActiveView()
 
 
-def process_it(x_, dirpath_):
-    st = datetime.datetime.now()
+def process_it(x_, dirpath_, frame_opt="all"):
     location_of_mxd = os.path.join(dirpath_, x_)
     path_of_process = os.path.dirname(location_of_mxd)
     excel_folder_name = os.path.abspath(os.path.join(path_of_process, "..", "EXCEL"))
@@ -405,9 +404,13 @@ def process_it(x_, dirpath_):
     for lyr_data in arcpy.mapping.ListLayers(mxd, "25000*", df_data):
         pass
     arcpy.SelectLayerByAttribute_management(lyr_data, "CLEAR_SELECTION")
-    frame_no_list = [row[0] for row in arcpy.da.SearchCursor(lyr_data, "Frame_No")]
+    if frame_opt == "all":
+        frame_no_list = [row[0] for row in arcpy.da.SearchCursor(lyr_data, "Frame_No")]
+    else:
+        frame_no_list = [frame_opt]
 
     for frame in frame_no_list:
+        st = datetime.datetime.now()
         excel_file_name = os.path.join(excel_folder_name, "FR" + str(int(frame)) + ".xlsx")
         excel_file = os.path.join(excel_folder_name, excel_file_name)
         workbook = xlrd.open_workbook(excel_file)
@@ -418,7 +421,6 @@ def process_it(x_, dirpath_):
         df = arcpy.mapping.ListDataFrames(mxd, "LegendUR*")[0]
         for lyr in arcpy.mapping.ListLayers(mxd, "25000*", df):
             pass
-
         arcpy.SelectLayerByAttribute_management(lyr, "NEW_SELECTION", "Frame_No = " + str(int(frame)))
         df_data.extent = lyr.getSelectedExtent()
         df_data.scale = 25000
